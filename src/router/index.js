@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
 import middlewarePipeline from "@/middleware/middlewarePipeline";
 import auth from "@/middleware/auth";
 let middlewares = { auth: auth };
@@ -8,8 +7,8 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      name: "home",
-      component: HomeView,
+      name: "product-list",
+      component: () => import("../views/ProductListView.vue"),
       meta: {
         middleware: ["auth"],
       },
@@ -31,6 +30,24 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import("../views/RegisterView.vue"),
       meta: { layout: "LoginLayout" },
+    },
+    {
+      path: "/product/create",
+      name: "productCreate",
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import("../views/ProductCreateView.vue"),
+      // meta: { layout: "LoginLayout" },
+    },
+    {
+      path: "/product/edit/:slug",
+      name: "productUpdate",
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import("../views/ProductEditView.vue"),
+      // meta: { layout: "LoginLayout" },
     },
     {
       path: "/:pathMatch(.*)*",
