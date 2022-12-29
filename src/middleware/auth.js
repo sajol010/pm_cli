@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 function auth({ next }) {
   console.log(next)
-  let isLoggedIn = false; // Can be calculated through store
+  let isLoggedIn = true; // Can be calculated through store
   if (!isLoggedIn) {
     return next({
       name: "Login",

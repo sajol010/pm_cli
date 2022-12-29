@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import middlewarePipeline from "@/middleware/middlewarePipeline";
 import auth from "@/middleware/auth";
-let middlewares = {auth: auth};
+let middlewares = { auth: auth };
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -10,9 +10,9 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
-      meta:{
-        middleware: ['auth']
-      }
+      meta: {
+        middleware: ["auth"],
+      },
     },
     {
       path: "/login",
@@ -32,6 +32,15 @@ const router = createRouter({
       component: () => import("../views/RegisterView.vue"),
       meta: { layout: "LoginLayout" },
     },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "NotFound",
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import("../views/NotFoundView.vue"),
+      // meta: { layout: "EmptyLayout" },
+    },
   ],
 });
 
@@ -41,7 +50,6 @@ router.beforeEach((to, from, next) => {
   const middleware = to.meta.middleware;
   const context = { to, from, next };
 
-  console.log(middleware[0])
   return middlewares[middleware[0]]({
     ...context,
     next: middlewarePipeline(context, middleware, 1),
