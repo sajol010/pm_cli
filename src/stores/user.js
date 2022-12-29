@@ -3,7 +3,9 @@ import { defineStore } from "pinia";
 import axios from "axios";
 export const useUserStore = defineStore("user", {
   state: () => ({
-    userInfo: {},
+    userInfo: localStorage.getItem("userInfo")
+      ? JSON.parse(localStorage.getItem("userInfo"))
+      : {},
   }),
   getters: {
     doubleCount: (state) => state.count * 2,
@@ -19,7 +21,13 @@ export const useUserStore = defineStore("user", {
               password: data.password,
             })
             .then(function (response) {
-              if (response.data.status) vRef.userInfo = response.data.data;
+              if (response.data.success) {
+                localStorage.setItem(
+                  "userInfo",
+                  JSON.stringify(response.data.data)
+                );
+                console.log(localStorage.getItem("userInfo"))
+              }
             });
         } catch (e) {
           console.log(e);

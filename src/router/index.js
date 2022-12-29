@@ -1,13 +1,15 @@
 import { createRouter, createWebHistory } from "vue-router";
 import middlewarePipeline from "@/middleware/middlewarePipeline";
 import auth from "@/middleware/auth";
-let middlewares = { auth: auth };
+import guest from "@/middleware/guest";
+import {useUserStore} from "@/stores/user";
+let middlewares = { auth: auth, guest:guest };
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
-      name: "product-list",
+      name: "productList",
       component: () => import("../views/ProductListView.vue"),
       meta: {
         middleware: ["auth"],
@@ -20,7 +22,7 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import("../views/LoginView.vue"),
-      meta: { layout: "LoginLayout" },
+      meta: { layout: "LoginLayout",middleware: ["guest"], },
     },
     {
       path: "/register",
@@ -29,7 +31,7 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import("../views/RegisterView.vue"),
-      meta: { layout: "LoginLayout" },
+      meta: { layout: "LoginLayout", middleware: ["guest"]},
     },
     {
       path: "/product/create",
@@ -38,7 +40,7 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import("../views/ProductCreateView.vue"),
-      // meta: { layout: "LoginLayout" },
+      meta: { middleware: ["auth"]},
     },
     {
       path: "/product/edit/:slug",
@@ -47,7 +49,7 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import("../views/ProductEditView.vue"),
-      // meta: { layout: "LoginLayout" },
+      meta: { middleware: ["auth"]},
     },
     {
       path: "/:pathMatch(.*)*",
@@ -65,7 +67,8 @@ router.beforeEach((to, from, next) => {
   if (!to.meta.middleware) return next();
 
   const middleware = to.meta.middleware;
-  const context = { to, from, next };
+  let store = useUserStore();
+  const context = { to, from, next, store };
 
   return middlewares[middleware[0]]({
     ...context,
