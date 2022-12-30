@@ -13,7 +13,8 @@ export const useProductsStore = defineStore("products", {
       let vRef = this;
       try {
         await axios.get("/products").then(function (response) {
-          if (response.data.status) vRef.products = response.data.data;
+          console.log(response.data.success)
+          if (response.data.success) vRef.products = response.data.data.list;
         });
       } catch (e) {
         console.log(e);

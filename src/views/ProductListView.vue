@@ -1,5 +1,6 @@
 <script>
-import useProductsStore from "@/stores/products";
+import { useProductsStore } from "@/stores/products";
+
 let productStore = useProductsStore();
 export default {
   name: "ProductList",
@@ -10,12 +11,11 @@ export default {
   },
   methods: {
     getProductList() {
-      let productList = productStore.$state.products;
-      console.log(productList);
+      this.products = productStore.products;
     },
   },
-  mounted() {
-    productStore.fetchProducts();
+  async mounted() {
+    await productStore.fetchProducts();
     this.getProductList();
   },
 };
@@ -30,36 +30,27 @@ export default {
         <table class="table table-striped">
           <thead>
             <tr>
-              <th>User</th>
-              <th>First name</th>
-              <th>Progress</th>
-              <th>Amount</th>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Quantity</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr v-for="(product, index) in products" :key="index">
               <td class="py-1">
                 <img src="../../images/faces/face1.jpg" alt="image" />
               </td>
-              <td>Herman Beck</td>
+              <td>{{ product.name }}</td>
               <td>
-                <div class="progress">
-                  <div
-                    class="progress-bar bg-success"
-                    role="progressbar"
-                    style="width: 25%"
-                    aria-valuenow="25"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  ></div>
-                </div>
+                {{ product.price }}
               </td>
-              <td>$ 77.99</td>
+              <td>{{ product.quantity }}</td>
               <td>
                 <router-link
                   class="btn btn-info"
-                  :to="{ name: 'productUpdate', params: { slug: 'test' } }"
+                  :to="{ name: 'productUpdate', params: { slug: product.slug } }"
                   >Edit</router-link
                 >
                 <a class="btn btn-danger">Delete</a>
@@ -68,6 +59,19 @@ export default {
           </tbody>
         </table>
       </div>
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1">Previous</a>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 </template>
