@@ -9,10 +9,10 @@ export const useProductsStore = defineStore("products", {
     doubleCount: (state) => state.count * 2,
   },
   actions: {
-    fetchProducts(data) {
+    async fetchProducts(data={}) {
       let vRef = this;
       try {
-        axios.get("/products").then(function (response) {
+        await axios.get("/products").then(function (response) {
           if (response.data.status) vRef.products = response.data.data;
         });
       } catch (e) {

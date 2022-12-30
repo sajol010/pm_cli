@@ -1,6 +1,23 @@
 <script>
+import useProductsStore from "@/stores/products";
+let productStore = useProductsStore();
 export default {
   name: "ProductList",
+  data: function () {
+    return {
+      products: [],
+    };
+  },
+  methods: {
+    getProductList() {
+      let productList = productStore.$state.products;
+      console.log(productList);
+    },
+  },
+  mounted() {
+    productStore.fetchProducts();
+    this.getProductList();
+  },
 };
 </script>
 
