@@ -42,6 +42,13 @@ export default {
         this.errors_list = Object.keys(errors).map(function (key) {
           return errors[key][0];
         });
+      }else{
+        if (response.message)
+          this.$toast.success(response.message);
+
+        this.$router.push({
+          name: "categoryList",
+        })
       }
     },
     fileUploaded: function (files) {
@@ -60,7 +67,7 @@ export default {
 <template>
   <div class="card">
     <div class="card-body">
-      <h4 class="card-title">Category Create</h4>
+      <h4 class="card-title">Category Edit</h4>
       <ul class="text-danger">
         <li v-for="(error, index) in errors_list" :key="index">{{ error }}</li>
       </ul>

@@ -40,6 +40,13 @@ export default {
         this.errors_list = Object.keys(errors).map(function (key) {
           return errors[key][0];
         });
+      }else{
+        if (response.message)
+          this.$toast.success(response.message);
+
+        this.$router.push({
+          name: "categoryList",
+        })
       }
     },
     fileUploaded: function (files) {

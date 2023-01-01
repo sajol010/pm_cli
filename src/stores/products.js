@@ -63,16 +63,18 @@ export const useProductsStore = defineStore("products", {
         });
         return data;
       } catch (e) {
-        console.log(e);
+        return e.response.data
       }
     },
-    deleteProduct(id) {
+    async deleteProduct(id) {
       try {
-        axios.delete("/products/" + id).then(function (response) {
-          console.log(response);
+        let data = {};
+        await axios.delete("/products/" + id).then(function (response) {
+          data = response;
         });
+        return data.data;
       } catch (e) {
-        console.log(e);
+        return e.response.data
       }
     },
   },

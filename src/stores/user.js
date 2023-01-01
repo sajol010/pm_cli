@@ -11,45 +11,40 @@ export const useUserStore = defineStore("user", {
     doubleCount: (state) => state.count * 2,
   },
   actions: {
-    login(data) {
+    async login(data) {
       let vRef = this;
       if (data.email && data.password) {
         try {
-          axios
+          let responseData = {};
+          await axios
             .post("/login", {
               email: data.email,
               password: data.password,
             })
             .then(function (response) {
+              responseData = response
               if (response.data.success) {
                 localStorage.setItem(
                   "userInfo",
                   JSON.stringify(response.data.data)
                 );
-                console.log(localStorage.getItem("userInfo"))
               }
             });
+          return responseData.data;
         } catch (e) {
-          console.log(e);
+          return e?.response?.data??{};
         }
       }
     },
-    register(data) {
-      let vRef = this;
-      if (data.email && data.password) {
-        try {
-          axios
-            .post("/register", {
-              email: data.email,
-              password: data.password,
-              name:data.name
-            })
-            .then(function (response) {
-              if (response.data.status) vRef.userInfo = response.data.data;
-            });
-        } catch (e) {
-          console.log(e);
-        }
+    async register(data) {
+      try {
+        let responseData = {};
+        await axios.post("/register", data).then(function (response) {
+          responseData = response
+        });
+        return responseData.data;
+      } catch (e) {
+        return e?.response?.data??{};
       }
     },
   },

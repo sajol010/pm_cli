@@ -59,10 +59,18 @@ export default {
 
       let response = await products.editProduct(this.formData.id, formData);
       if (!response.success) {
+        if (response?.message)
+          this.$toast.error(response.message);
+
         let errors = response.errors;
         this.errors_list = Object.keys(errors).map(function (key) {
           return errors[key][0];
         });
+      }else{
+        this.$toast.success("Product has been updated!");
+        this.$router.push({
+          name: 'productList'
+        })
       }
     },
     fileUploaded: function (files) {

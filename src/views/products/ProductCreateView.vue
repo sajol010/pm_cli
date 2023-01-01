@@ -9,7 +9,6 @@ export default {
   name: "ProductCreateView",
   data() {
     return {
-      options: ["list", "of", "options"],
       uploaded_files: [],
       formData: {
         name: "",
@@ -61,6 +60,11 @@ export default {
         this.errors_list = Object.keys(errors).map(function (key) {
           return errors[key][0];
         });
+      }else{
+        this.$toast.success("Product has been updated!");
+        this.$router.push({
+          name: 'productList'
+        })
       }
     },
     fileUploaded: function (files) {

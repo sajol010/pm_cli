@@ -13,6 +13,17 @@ export default {
     getProductList() {
       this.products = productStore.products;
     },
+    async deleteProduct(id){
+      let response = await productStore.deleteProduct(id)
+      if (response.success){
+        this.$toast.success("Product has been deleted!");
+        await productStore.fetchProducts();
+        this.getProductList();
+      }else{
+        if (response?.message)
+          this.$toast.error(response?.message);
+      }
+    }
   },
   async mounted() {
     await productStore.fetchProducts();
@@ -24,8 +35,10 @@ export default {
 <template>
   <div class="card">
     <div class="card-body">
+    <div>
       <h4 class="card-title">Product List</h4>
-
+      <router-link :to="{name:'productCreate'}" class="btn btn-sm btn-secondary">Add</router-link>
+    </div>
       <div class="table-responsive">
         <table class="table table-striped">
           <thead>
@@ -40,7 +53,7 @@ export default {
           <tbody>
             <tr v-for="(product, index) in products" :key="index">
               <td class="py-1">
-                <img src="../../images/faces/face1.jpg" alt="image" />
+                <img :src="product?.images[0]?.image??''" alt="image" />
               </td>
               <td>{{ product.name }}</td>
               <td>
@@ -49,11 +62,12 @@ export default {
               <td>{{ product.quantity }}</td>
               <td>
                 <router-link
-                  class="btn btn-info"
+                  class="btn btn-sm btn-info p-1"
+                  style="margin-right: 4px"
                   :to="{ name: 'productUpdate', params: { slug: product.slug}, query:{ id: product.id } }"
-                  >Edit</router-link
+                  ><span class="mdi mdi-circle-edit-outline"></span></router-link
                 >
-                <a class="btn btn-danger">Delete</a>
+                <a class="btn btn-danger btn-sm p-1" @click="deleteProduct(product.id)"><span class="mdi mdi-trash-can"></span></a>
               </td>
             </tr>
           </tbody>
