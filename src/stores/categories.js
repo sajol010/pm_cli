@@ -1,48 +1,44 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
-export const useProductsStore = defineStore("products", {
+export const useCategoriesStore = defineStore("categories", {
   state: () => ({
-    products: [],
+    categories: [],
   }),
   getters: {
     doubleCount: (state) => state.count * 2,
   },
   actions: {
-    async fetchProducts(data = {}) {
+    async fetchCategories(data = {}) {
       let vRef = this;
       try {
-        await axios.get("/products").then(function (response) {
-          console.log(response.data.success);
-          if (response.data.success) vRef.products = response.data.data.list;
-        });
+        let for_option = data.for_option ?? false;
+        await axios
+          .get("/categories?for_option=" + for_option)
+          .then(function (response) {
+            if (response.data.success) vRef.categories = response.data.data;
+          });
       } catch (e) {
         console.log(e);
       }
     },
-    async addProduct(data) {
+    async addCategory(data) {
       try {
         let resData = {};
-        await axios
-          .post("/products", data, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          })
-          .then(function (response) {
-            resData = response;
-          });
+        await axios.post("/categories", data).then(function (response) {
+          resData = response;
+        });
 
         return resData.data;
       } catch (e) {
         return e.response.data;
       }
     },
-    async editProduct(id, data) {
+    async editCategory(id, data) {
       try {
         let resData = {};
         await axios
-          .post("/products/" + id, data, {
+          .post("/categories/" + id, data, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
@@ -55,10 +51,10 @@ export const useProductsStore = defineStore("products", {
         return e.response.data;
       }
     },
-    async getProduct(id) {
+    async getCategory(id) {
       try {
         let data = {};
-        await axios.get("/products/" + id).then(function (response) {
+        await axios.get("/categories/" + id).then(function (response) {
           data = response.data.data;
         });
         return data;
@@ -66,9 +62,9 @@ export const useProductsStore = defineStore("products", {
         console.log(e);
       }
     },
-    deleteProduct(id) {
+    deleteCategory(id) {
       try {
-        axios.delete("/products/" + id).then(function (response) {
+        axios.delete("/categories/" + id).then(function (response) {
           console.log(response);
         });
       } catch (e) {

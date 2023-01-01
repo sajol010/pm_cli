@@ -2,15 +2,15 @@ import { createRouter, createWebHistory } from "vue-router";
 import middlewarePipeline from "@/middleware/middlewarePipeline";
 import auth from "@/middleware/auth";
 import guest from "@/middleware/guest";
-import {useUserStore} from "@/stores/user";
-let middlewares = { auth: auth, guest:guest };
+import { useUserStore } from "@/stores/user";
+let middlewares = { auth: auth, guest: guest };
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
       name: "productList",
-      component: () => import("../views/ProductListView.vue"),
+      component: () => import("../views/products/ProductListView.vue"),
       meta: {
         middleware: ["auth"],
       },
@@ -22,7 +22,7 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import("../views/LoginView.vue"),
-      meta: { layout: "LoginLayout",middleware: ["guest"], },
+      meta: { layout: "LoginLayout", middleware: ["guest"] },
     },
     {
       path: "/register",
@@ -31,7 +31,7 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import("../views/RegisterView.vue"),
-      meta: { layout: "LoginLayout", middleware: ["guest"]},
+      meta: { layout: "LoginLayout", middleware: ["guest"] },
     },
     {
       path: "/product/create",
@@ -39,8 +39,8 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import("../views/ProductCreateView.vue"),
-      meta: { middleware: ["auth"]},
+      component: () => import("../views/products/ProductCreateView.vue"),
+      meta: { middleware: ["auth"] },
     },
     {
       path: "/product/edit/:slug",
@@ -48,8 +48,36 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import("../views/ProductEditView.vue"),
-      meta: { middleware: ["auth"]},
+      component: () => import("../views/products/ProductEditView.vue"),
+      meta: { middleware: ["auth"] },
+    },
+
+    {
+      path: "/categories",
+      name: "categoryList",
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import("../views/categories/CategoryListView.vue"),
+      meta: { middleware: ["auth"] },
+    },
+    {
+      path: "/category/create",
+      name: "categoryCreate",
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import("../views/categories/CategoryCreateView.vue"),
+      meta: { middleware: ["auth"] },
+    },
+    {
+      path: "/categories/edit/:id",
+      name: "categoryUpdate",
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import("../views/categories/CategoryEditView.vue"),
+      meta: { middleware: ["auth"] },
     },
     {
       path: "/:pathMatch(.*)*",

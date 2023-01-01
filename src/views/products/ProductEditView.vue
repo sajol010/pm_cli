@@ -3,40 +3,61 @@ import Multiselect from "@vueform/multiselect";
 import FileUpload from "@/components/FileUpload.vue";
 import { toRaw } from "vue";
 import { useProductsStore } from "@/stores/products";
+import { useCategoriesStore } from "@/stores/categories";
 export default {
   components: { Multiselect, FileUpload },
   name: "ProductCreateView",
   data() {
     return {
-      options: ["list", "of", "options"],
       uploaded_files: [],
       formData: {
+        id: '',
         name: "",
         price: "",
         quantity: "",
-        details: "",
+        description: "",
         categories: [],
       },
       errors_list: [],
+      category_list: []
     };
   },
   methods: {
+    validate: function () {
+      this.errors_list = [];
+      if (this.formData.name == "") {
+        this.errors_list.push("Name is required");
+      }
+      if (this.formData.quantity == "") {
+        this.errors_list.push("Quantity is required");
+      }
+      if (this.formData.price == "") {
+        this.errors_list.push("Price is required");
+      }
+      if (isNaN(parseFloat(this.formData.price))) {
+        this.errors_list.push("Enter a valid price");
+      }
+      return this.errors_list.length <= 0;
+    },
     saveProduct: async function (e) {
       e.preventDefault();
+      if (!this.validate()) return;
+
       let products = useProductsStore();
       let form = toRaw(this.formData);
       let formData = new FormData();
       formData.append("name", form.name);
       formData.append("price", form.price);
       formData.append("quantity", form.quantity);
-      formData.append("details", form.details);
-      formData.append("categories", form.categories);
+      formData.append("description", form.description);
+      formData.append("category_ids", form.categories);
+      formData.append("_method", 'PUT');
       let files = toRaw(this.uploaded_files);
       files.forEach(function (file, index) {
         formData.append("images[" + index + "]", file);
       });
 
-      let response = await products.addProduct(formData);
+      let response = await products.editProduct(this.formData.id, formData);
       if (!response.success) {
         let errors = response.errors;
         this.errors_list = Object.keys(errors).map(function (key) {
@@ -48,6 +69,23 @@ export default {
       this.uploaded_files = files;
     },
   },
+  async mounted() {
+    let products = useProductsStore();
+    let id = this.$route.query.id;
+
+    let product = await products.getProduct(id)
+    this.formData.id = product.id??''
+    this.formData.name = product.name??''
+    this.formData.price = product.price??''
+    this.formData.quantity = product.quantity??''
+    this.formData.description = product.description??''
+    this.formData.categories = product.categories??[]
+
+    let categoryStore = useCategoriesStore()
+    await categoryStore.fetchCategories({ for_option: true });
+    console.log( categoryStore.categories)
+    this.category_list = categoryStore.categories
+  }
 };
 </script>
 <template>
@@ -55,7 +93,7 @@ export default {
     <div class="card-body">
       <h4 class="card-title">Product Create</h4>
       <ul class="text-danger">
-        <li v-for="(error, index) in errors_list" :key="index">{{error}}</li>
+        <li v-for="(error, index) in errors_list" :key="index">{{ error }}</li>
       </ul>
       <form class="forms-sample" @submit="saveProduct">
         <div class="form-group">
@@ -96,11 +134,7 @@ export default {
             :close-on-select="false"
             :searchable="true"
             :create-option="false"
-            :options="[
-              { value: '1', label: 'Batman' },
-              { value: '2', label: 'Robin' },
-              { value: '3', label: 'Joker' },
-            ]"
+            :options="category_list"
           />
         </div>
         <div class="form-group">
@@ -113,7 +147,7 @@ export default {
             class="form-control"
             id="exampleTextarea1"
             rows="4"
-            v-model="formData.details"
+            v-model="formData.description"
           ></textarea>
         </div>
         <button type="submit" class="btn btn-primary me-2">Submit</button>
@@ -122,4 +156,4 @@ export default {
     </div>
   </div>
 </template>
-<style src="@vueform/multiselect/themes/default.css"></style>
+<style src="../../../node_modules/@vueform/multiselect/themes/default.css"></style>

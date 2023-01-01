@@ -50,7 +50,7 @@ export default {
               <td>
                 <router-link
                   class="btn btn-info"
-                  :to="{ name: 'productUpdate', params: { slug: product.slug } }"
+                  :to="{ name: 'productUpdate', params: { slug: product.slug}, query:{ id: product.id } }"
                   >Edit</router-link
                 >
                 <a class="btn btn-danger">Delete</a>
