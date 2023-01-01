@@ -9,30 +9,33 @@ export const useProductsStore = defineStore("products", {
     doubleCount: (state) => state.count * 2,
   },
   actions: {
-    async fetchProducts(data={}) {
+    async fetchProducts(data = {}) {
       let vRef = this;
       try {
         await axios.get("/products").then(function (response) {
-          console.log(response.data.success)
+          console.log(response.data.success);
           if (response.data.success) vRef.products = response.data.data.list;
         });
       } catch (e) {
         console.log(e);
       }
     },
-    addProduct(data) {
+    async addProduct(data) {
       try {
-        axios
-          .post("/products", {
-            email: data.email,
-            password: data.password,
-            name: data.name,
+        let resData = {};
+        await axios
+          .post("/products", data, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
           })
           .then(function (response) {
-            console.log(response);
+            resData = response;
           });
+
+        return resData.data;
       } catch (e) {
-        console.log(e);
+        return e.response.data
       }
     },
     editProduct(id, data) {

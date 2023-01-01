@@ -5,6 +5,10 @@ import App from "./App.vue";
 import router from "./router";
 
 
+import DropZone from 'dropzone-vue';
+
+// optionally import default styles
+import "dropzone-vue/dist/dropzone-vue.common.css";
 
 import "./assets/main.css";
 
@@ -14,6 +18,7 @@ const app = createApp(App);
 
 app.use(createPinia());
 app.use(router);
+app.use(DropZone);
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL || '';
 import {useUserStore} from "@/stores/user";
